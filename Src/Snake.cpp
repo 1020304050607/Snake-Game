@@ -12,49 +12,57 @@ Texture headUpTexture, headDownTexture, headLeftTexture, headRightTexture;
 Texture bodyUpTexture, bodyDownTexture, bodyLeftTexture, bodyRightTexture;
 
 Sprite* snakeHeadSprite;
-Sprite* snakeBodySprite;   // Will be used for body parts later
+Sprite* snakeBodySprite;
+
+Texture BackgroundTexture;
+Sprite* BackgroundSprite;
 
 void ImportAssets()
 {
-    cout << "Loading all game assets...\n";
+    cout << "Loading assets" << std::endl;
 
     // Load Apple
-    if (!appleTexture.loadFromFile("../Assets/Apple.png"))
-    cout << "ERROR: Could not load Assets/Apple.png\n";
+    if (!appleTexture.loadFromFile("../Assets/Apple.png", false, IntRect({100, 100}, {100, 100})))
+    cout << "could not found Apple.png" << std::endl;
 
     // Load Head textures
     if (!headUpTexture.loadFromFile("../Assets/Up.png"))
-        cout << "ERROR: Could not load Assets/Up.png\n";
+        cout << "could not found Up.png" << std::endl;
     
     if (!headDownTexture.loadFromFile("../Assets/Down.png"))
-        cout << "ERROR: Could not load Assets/Down.png\n";
+        cout << "could not found Down.png" << std::endl;
     
     if (!headLeftTexture.loadFromFile("../Assets/Left.png"))
-        cout << "ERROR: Could not load Assets/Left.png\n";
+        cout << "could not found Left.png" << std::endl;
     
     if (!headRightTexture.loadFromFile("../Assets/Right.png"))
-        cout << "ERROR: Could not load Assets/Right.png\n";
+        cout << "could not found Right.png" << std::endl;
 
     // Load Body textures
     if (!bodyUpTexture.loadFromFile("../Assets/UpBody.png"))
-        cout << "ERROR: Could not load Assets/UpBody.png\n";
+        cout << "could not found UpBody.png" << std::endl;
     
     if (!bodyDownTexture.loadFromFile("../Assets/DownBody.png"))
-        cout << "ERROR: Could not load Assets/DownBody.png\n";
+        cout << "could not found DownBody.png" << std::endl;
     
     if (!bodyLeftTexture.loadFromFile("../Assets/LeftBody.png"))
-        cout << "ERROR: Could not load Assets/LeftBody.png\n";
+        cout << "could not found LeftBody.png" << std::endl;
     
     if (!bodyRightTexture.loadFromFile("../Assets/RightBody.png"))
-        cout << "ERROR: Could not load Assets/RightBody.png\n";
+        cout << "could not found RightBody.png" << std::endl;
+    
+    if (!BackgroundTexture.loadFromFile("../Assets/Background.png"))
+        cout << " could not found background.png" << std::endl;
 
-    // Create Sprites AFTER textures are loaded (SFML 3 fix)
+    // Create Sprites after the textures are created
     appleSprite = new Sprite(appleTexture);
     snakeHeadSprite = new Sprite(headUpTexture);
     snakeBodySprite = new Sprite(bodyUpTexture);
+    BackgroundSprite = new Sprite(BackgroundTexture);
 
     // Set default head texture when game starts
     snakeHeadSprite->setTexture(headUpTexture);
+    BackgroundSprite->setTexture(BackgroundTexture);
 
     cout << "All assets loaded successfully!\n";
 }
@@ -62,9 +70,9 @@ void ImportAssets()
 void Possision()
 {
     // Set positions so we can actually see the textures
-    appleSprite->setPosition({400.f, 250.f});     // Place apple somewhere visible
+    appleSprite->setPosition({400.f, 250.f}); // Place apple somewhere visible
 
-    snakeHeadSprite->setPosition({200.f, 300.f}); // Starting position for snake head
+    snakeHeadSprite->setPosition({290.f, 200.f}); // Starting position for snake head
 }
 
 void AddKeys()
@@ -99,8 +107,10 @@ void CreateWindow()
         window.clear(); // Clearing The window
         
         // Drawing the Apple Textures
+        window.draw(*BackgroundSprite);
         window.draw(*appleSprite);
         window.draw(*snakeHeadSprite);
+
         // Display the Window
         window.display();
     }
