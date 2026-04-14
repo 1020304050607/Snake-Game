@@ -1,89 +1,100 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <random>
+#include <chrono>
 
 using namespace sf;
 using namespace std;
 
+// Making the textures and sprites global
 Texture appleTexture;
 Sprite* appleSprite;
 
-Texture headUpTexture, headDownTexture, headLeftTexture, headRightTexture;
-Texture bodyUpTexture, bodyDownTexture, bodyLeftTexture, bodyRightTexture;
+Texture snakeTexture;
+Sprite* snakeSprite;
 
-Sprite* snakeHeadSprite;
-Sprite* snakeBodySprite;
+Texture backgroundTexture;
+Sprite* backgroundSprite;
 
-Texture BackgroundTexture;
-Sprite* BackgroundSprite;
+// Adding a movement clock for the snake
+Clock movementClock;
+float moveDelay = 0.15f; // For GitHub forkers lower the delay = faster the snake
+Vector2f direction = {20.0f, 0.0f};
 
 void ImportAssets()
 {
     cout << "Loading assets" << std::endl;
 
-    // Load Apple
-    if (!appleTexture.loadFromFile("../Assets/Apple.png", false, IntRect({100, 100}, {100, 100})))
-    cout << "could not found Apple.png" << std::endl;
+    // Load the Apple texture
+    if (!appleTexture.loadFromFile("../Assets/Apple.png"))
+    cout << "Apple could not be found" << std::endl;
 
-    // Load Head textures
-    if (!headUpTexture.loadFromFile("../Assets/Up.png"))
-        cout << "could not found Up.png" << std::endl;
-    
-    if (!headDownTexture.loadFromFile("../Assets/Down.png"))
-        cout << "could not found Down.png" << std::endl;
-    
-    if (!headLeftTexture.loadFromFile("../Assets/Left.png"))
-        cout << "could not found Left.png" << std::endl;
-    
-    if (!headRightTexture.loadFromFile("../Assets/Right.png"))
-        cout << "could not found Right.png" << std::endl;
+    // Load the snake texture
+    if (!snakeTexture.loadFromFile("../Assets/Snake.png"))
+        cout << "Snake could not be found" << std::endl;
 
-    // Load Body textures
-    if (!bodyUpTexture.loadFromFile("../Assets/UpBody.png"))
-        cout << "could not found UpBody.png" << std::endl;
+    // Load the background texture
+    if (!backgroundTexture.loadFromFile("../Assets/Background.png"))
+        cout << "Background could not be found" << std::endl;
     
-    if (!bodyDownTexture.loadFromFile("../Assets/DownBody.png"))
-        cout << "could not found DownBody.png" << std::endl;
-    
-    if (!bodyLeftTexture.loadFromFile("../Assets/LeftBody.png"))
-        cout << "could not found LeftBody.png" << std::endl;
-    
-    if (!bodyRightTexture.loadFromFile("../Assets/RightBody.png"))
-        cout << "could not found RightBody.png" << std::endl;
-    
-    if (!BackgroundTexture.loadFromFile("../Assets/Background.png"))
-        cout << " could not found background.png" << std::endl;
-
     // Create Sprites after the textures are created
+    backgroundSprite = new Sprite(backgroundTexture);
     appleSprite = new Sprite(appleTexture);
-    snakeHeadSprite = new Sprite(headUpTexture);
-    snakeBodySprite = new Sprite(bodyUpTexture);
-    BackgroundSprite = new Sprite(BackgroundTexture);
+    snakeSprite = new Sprite(snakeTexture);
 
     // Set default head texture when game starts
-    snakeHeadSprite->setTexture(headUpTexture);
-    BackgroundSprite->setTexture(BackgroundTexture);
+    backgroundSprite->setTexture(backgroundTexture);
+    appleSprite->setTexture(appleTexture);
+    snakeSprite->setTexture(snakeTexture);
 
-    cout << "All assets loaded successfully!\n";
+    cout << "All assets loaded successfully!" << std::endl;
 }
 
 void Possision()
 {
     // Set positions so we can actually see the textures
-    appleSprite->setPosition({400.f, 250.f}); // Place apple somewhere visible
+    snakeSprite->setPosition({290.f, 200.f}); // Starting position for snake head
+    
+    // Randomizing apple possision
+    int appleX = 100.0f + (rand() % 600);
+    int appleY = 100.0f + (rand() % 400);
 
-    snakeHeadSprite->setPosition({290.f, 200.f}); // Starting position for snake head
+    appleSprite->setPosition(Vector2f(appleX, appleY));
+
+    cout << "apple possision is " << appleX << " and " << appleY << std::endl;
 }
 
 void AddKeys()
 {
-    if (Keyboard::isKeyPressed(Keyboard::Key::D))
+    if (Keyboard::isKeyPressed(Keyboard::Key::D)) // Right
     {
-        // Move Right
+        direction = {20.0f, 0.0f};
+        movementClock.restart();
     }
-    else if (Keyboard::isKeyPressed(Keyboard::Key::A))
+
+    else if (Keyboard::isKeyPressed(Keyboard::Key::A)) // Left
     {
-        // Move Left
+        direction = {-20.0f, 0.0f};
+        movementClock.restart();
+    }
+    
+    else if (Keyboard::isKeyPressed(Keyboard::Key::W)) // Forward
+    {
+        direction = {0.0f, -20.0f};
+        movementClock.restart();
+    }
+    
+    else if (Keyboard::isKeyPressed(Keyboard::Key::S)) // Backward
+    {
+        direction = {0.0f, 20.0f};
+        movementClock.restart();
+    }
+    
+    if (movementClock.getElapsedTime().asSeconds() >= moveDelay)
+    {
+        snakeSprite->move(direction);
+        movementClock.restart();
     }
 }
 
@@ -93,6 +104,8 @@ void CreateWindow()
     
     window.setVerticalSyncEnabled(true);
     window.setFramerateLimit(60); // Limit Framerate to 60 FPS
+    
+    movementClock.restart(); // Restart the clock for movement
     
     while (window.isOpen()) // Create a loop for the window to run
     {
@@ -107,9 +120,9 @@ void CreateWindow()
         window.clear(); // Clearing The window
         
         // Drawing the Apple Textures
-        window.draw(*BackgroundSprite);
+        window.draw(*backgroundSprite);
         window.draw(*appleSprite);
-        window.draw(*snakeHeadSprite);
+        window.draw(*snakeSprite);
 
         // Display the Window
         window.display();
