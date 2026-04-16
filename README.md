@@ -1,2 +1,35 @@
-# Snake-Game
-This is my first attempt to make an actuall game in C++ I've been working with python for a long time 3+ years and I've got tired of it it's slow confusing and to make something run fast at it you will need Ctypes which is basically C. So I decided to make this snake game currently it's still growing and I found some good help here and there especially with the hitboxes the documentation didn't help enough. I had to do a lot of manual searching and its almost finished. I am looking forward making more games and scripts that will help people my goal of this game is to make it as a prototype for something bigger that i have in mind and take code from that and paste it into another project like a small framework. If anybody got any ideas for a new script, game or recomendations please send me a message.
+# 🐍 Snake Game in C++
+
+My first attempt at building a game in C++!  
+I'm still learning modern C++ and would love any feedback, suggestions, or contributions to improve it.
+
+This is a classic Snake game running in the terminal/console.
+
+## ✨ Features
+
+- Classic snake gameplay (eat food, grow longer, avoid walls & self-collision)
+- Score tracking
+- Increasing speed as you grow (optional – can be added)
+- Simple and clean code structure
+- Built with **CMake** for easy compilation
+
+## 🛠️ Technologies
+
+- **C++** (Modern C++ features)
+- Console/terminal output
+- CMake build system
+
+## 🚀 How to Build and Run
+
+### Prerequisites
+- A C++ compiler (g++, clang++, or MSVC)
+- CMake (version 3.10 or higher)
+
+### Build Steps
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/1020304050607/Snake-Game.git
+   cd Snake-Game
+   cd Build
+   ninja && Game.exe
