@@ -142,59 +142,6 @@ public:
         }
     }
 
-    void Gameover()
-    {
-        Font font;
-        Text* text = nullptr;
-
-        FloatRect snakeBox = snakeSprite->getGlobalBounds();
-        
-        if (snakeBox.position.x < -190 |
-            snakeBox.position.y < -180 |
-            snakeBox.position.x + snakeBox.size.x > 1000 |
-            snakeBox.position.y + snakeBox.size.y > 800)
-        {
-            cout << "Game Over - You Hitted A Wall" << std::endl;
-            
-            // Notify user that he lost
-            text = new Text(font, "Game Over");
-
-            text->setCharacterSize(48);
-            text->setFillColor(Color::Black);
-            text->setStyle(Text::Bold);
-            text->setPosition(Vector2f{230.0f, 150.0f});
-
-            // Reset score
-            player_score = 0;
-            scoreText.setString("Score: " + to_string(player_score));
-            
-            RenderWindow window(VideoMode({800, 600}), "Game Over"); // Create A Renderable Window
-            
-            window.setVerticalSyncEnabled(true);
-            window.setFramerateLimit(60); // Set at 60 FPS for great performance while not cooking the CPU 
-
-            while (window.isOpen()) // Create a loop for the window to run
-            {
-                while (const std::optional event = window.pollEvent())
-                {
-                    if (event->is<Event::Closed>())
-                        window.close();
-                }
-
-                window.clear(); // Clearing The window
-                    
-                // Drawing the Apple Textures
-                window.draw(*backgroundSprite);
-                    
-                // Display the Window
-                window.display();
-            }
-            
-            // Respawn the player to the default possision
-            snakeSprite->setPosition(Vector2f{290.f, 200.f});
-        }
-    }
-
     void AddKeys()
     {   
         // AWSD and Arrow Movement
@@ -253,11 +200,12 @@ public:
 
     void CreateWindow()
     {
+        Text* text;
+        
         RenderWindow window(VideoMode({800, 600}), "Snake Game - Playing"); // Create A Renderable Window
-            
+          
         window.setVerticalSyncEnabled(true);
-        window.setFramerateLimit(20); // Set at 60 FPS for great performance while not cooking the CPU 
-
+        window.setFramerateLimit(20); // Set at 60 FPS for great performance while not cooking the CPU
         while (window.isOpen()) // Create a loop for the window to run
         {
             while (const std::optional event = window.pollEvent())
@@ -265,23 +213,70 @@ public:
                 if (event->is<Event::Closed>())
                     window.close();
             }
-                
+        
             AddKeys();
             Hitboxes();
 
-            window.clear(); // Clearing The window
+            FloatRect snakeBox = snakeSprite->getGlobalBounds();
+              
+            if (snakeBox.position.x < -190.0f |
+                snakeBox.position.y < -180.0f |
+                snakeBox.position.x + snakeBox.size.x > 1000.0f |
+                snakeBox.position.y + snakeBox.size.y > 800.0f)
+            {
+                cout << "Game Over - You Hitted A Wall" << std::endl;
+                  
+                window.close();   // close the playing window first
                 
+                // Notify user that he lost
+                text = new Text(font, "Game Over");
+                text->setCharacterSize(48);
+                text->setFillColor(Color::Black);
+                text->setStyle(Text::Bold);
+                text->setPosition(Vector2f{230.0f, 150.0f});
+                  
+                RenderWindow window(VideoMode({800, 600}), "Game Over"); // Create A Renderable Window
+                  
+                window.setVerticalSyncEnabled(true);
+                window.setFramerateLimit(60); // Set at 60 FPS for great performance while not cooking the CPU
+                while (window.isOpen()) // Create a loop for the window to run
+                {
+                    while (const std::optional event = window.pollEvent())
+                    {
+                        if (event->is<Event::Closed>())
+                        {
+                            window.close();
+                        }
+                    }
+                    window.clear(); // Clearing The window
+                      
+                    // Drawing the Apple Textures
+                    window.draw(*backgroundSprite);
+                      
+                    window.draw(*text);   // draw the Game Over text
+                    
+                    // Display the Window
+                    window.display();
+                }
+                  
+                    // Respawn the player to the default possision
+                    snakeSprite->setPosition(Vector2f{290.f, 200.f});    
+   
+                return;
+            }  
+            window.clear(); // Clearing The window
+              
             // Drawing the Apple Textures
             window.draw(*backgroundSprite);
             window.draw(*appleSprite);
             window.draw(*snakeSprite);
-                
+              
             // Deawing the score
             window.draw(scoreText);
-                
+              
             // Display the Window
             window.display();
-                
+              
         }
     }
     
@@ -434,8 +429,6 @@ public:
         return 0;
     }
 };
-
-
 
 int main()
 {
